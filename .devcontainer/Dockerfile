@@ -5,7 +5,7 @@ RUN conda create -n main python=3.10 -y
 SHELL ["conda", "run", "-n", "main", "/bin/bash", "-c"]
 
 RUN apt update
-RUN apt install aptitude tree micro fish -y
+RUN apt install aptitude tree micro fish gh -y
 
 RUN conda init bash
 RUN conda install -c conda-forge mamba -y

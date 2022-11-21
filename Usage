@@ -1,5 +1,5 @@
 1. Clone repository to your local machine, or to a remote machine meant to be the job submission client
 
-```bash
+```
 git clone https://github.com/BayesWatch/bwatchcompute.git
 ```

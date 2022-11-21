@@ -1,4 +1,4 @@
-from bwatch_compute import batch_job
+from bwatch_compute import Job
 
 
 def generate_experiment_scripts(args, **kwargs):
@@ -13,7 +13,7 @@ def generate_experiment_scripts(args, **kwargs):
 # start a __main__ block
 if __name__ == "__main__":
     container_path = "gcr.io/bayescompute-275117/bayescompute:latest"
-    experiment_runner = batch_job.BatchJob(
+    experiment_runner = Job(
         script_list=generate_experiment_scripts,
         accelerator_type="NVIDIA_A100",
         container_path=container_path,

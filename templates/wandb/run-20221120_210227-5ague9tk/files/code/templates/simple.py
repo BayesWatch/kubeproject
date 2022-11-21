@@ -42,4 +42,4 @@ loss.backward()
 wandb.log({"loss": loss})
 # log model gradients and parameters
 wandb.log({"gradients": wandb.Histogram(model.grad)})
-wandb.log({"parameters": wandb.Histogram(model.detach())})
+wandb.log({"parameters": wandb.Histogram(model)})

@@ -1,31 +1,24 @@
-FROM condaforge/mambaforge:latest
+FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:latest
 
 SHELL ["/bin/bash", "-c"]
 
 # install basic dev tools and beautiful shell stuff
 RUN apt update
-RUN apt install micro bat git tmux fish curl -y
+RUN apt install micro bat git tmux fish curl aptitude -y
 
-# install gcloud dependencies
-RUN apt-get software-properties-common rsync install apt-transport-https ca-certificates gnupg ssh -y
-RUN apt-get update
-RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-RUN apt-get update && apt-get install google-cloud-cli
+RUN apt update
+RUN apt install -y ca-certificates curl
+RUN apt install -y apt-transport-https
+RUN curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+RUN echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
 
-RUN apt-get install google-cloud-cli kubectl google-cloud-cli-app-engine-python google-cloud-cli-app-engine-python-extras
+RUN apt update
+RUN aptitude install kubelet kubeadm kubectl -y
 
-# install kubernetes dependencies
-
-RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-RUN add-apt-repository 'deb http://apt.kubernetes.io/ kubernetes-xenial main'
-RUN apt-get install kubelet kubeadm kubectl kubernetes-cnisudo google-cloud-sdk-gke-gcloud-auth-plugin -y
-RUN systemctl enable kubelet
-
-RUN mkdir -p /root/.config/fish/
-RUN touch /root/.config/fish/config.fish
-RUN echo "starship init fish | source" >> ~/.config/fish/config.fish
-RUN  echo 'eval "$(starship init bash)"' >> ~/.bashrc
+# RUN mkdir -p /root/.config/fish/
+# RUN touch /root/.config/fish/config.fish
+# RUN echo "starship init fish | source" >> ~/.config/fish/config.fish
+# RUN echo 'eval "$(starship init bash)"' >> ~/.bashrc
 
 ENTRYPOINT ["/bin/bash"]
 

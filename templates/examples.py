@@ -20,13 +20,3 @@ if __name__ == "__main__":
         num_gpus_per_experiment=1,
         num_repeat_experiment=3,
     )
-
-    # or TPU based
-
-    experiment_runner = batch_job.BatchJob(
-        script_list=generate_experiment_scripts,
-        accelerator_type="TPU_V3_8_ON_DEMAND",
-        container_path=container_path,
-        num_gpus_per_experiment=1,
-        num_repeat_experiment=3,
-    )

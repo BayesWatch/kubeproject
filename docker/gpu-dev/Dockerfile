@@ -1,32 +1,40 @@
-FROM gcr.io/deeplearning-platform-release/pytorch-gpu:latest
+FROM gcr.io/deeplearning-platform-release/base-cu113
 
-SHELL ["/bin/bash", "-c"]
+RUN conda create -n main python=3.10 -y
 
-RUN apt-get update
+SHELL ["conda", "run", "-n", "main", "/bin/bash", "-c"]
+
+RUN apt update
+RUN apt install aptitude tree micro fish -y
+
 RUN conda init bash
-RUN conda create -n gate python=3.10 -y
-RUN echo "conda activate gate" >> ~/.bashrc
+RUN conda install -c conda-forge mamba -y
+RUN mamba install -c conda-forge starship -y
+RUN mamba install -c conda-forge wandb transformers -y
+RUN mamba install -c conda-forge bash htop jupyterlab -y
+RUN mamba install -c conda-forge micro bat -y
+RUN mamba install -c conda-forge google-cloud-storage -y
+RUN mamba install -c conda-forge google-api-python-client -y
+RUN mamba install -c conda-forge gh -y
+RUN mamba install -c conda-forge git -y
+RUN mamba install -c conda-forge git-lfs -y
+RUN mamba install -c conda-forge black -y
+RUN mamba install -c conda-forge tmux -y
 
-RUN git clone https://github.com/AntreasAntoniou/GATE.git
+RUN echo yes | pip install pytest-pretty-terminal
+RUN echo yes | pip install glances
+RUN echo yes | pip install loguru
+RUN echo yes | pip install nvitop
+RUN git lfs install
 
-SHELL ["conda", "run", "-n", "gate", "/bin/bash", "-c"]
 
-RUN cd GATE \
-    && conda install -c conda-forge mamba -y \
-    && mamba install pytorch torchvision torchaudio cudatoolkit=11.6 -c pytorch -c conda-forge \
-    && bash install_dependencies.sh
+RUN mkdir -p /root/.config/fish/
+RUN touch /root/.config/fish/config.fish
+RUN echo "conda activate main" >> ~/.bashrc
+RUN echo "starship init fish | source" >> ~/.config/fish/config.fish
+RUN echo 'eval "$(starship init bash)"' >> ~/.bashrc
 
-RUN apt install fish -y \
-    && mamba install starship -y
 
-RUN apt install libgl1-mesa-glx -y
-RUN apt-get install 'ffmpeg'\
-    'libsm6'\
-    'libxext6'  -y \
 
-RUN cd GATE \
-    && git pull
+ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
 
-CWD /GATE
-
-CMD ["bin/bash"]

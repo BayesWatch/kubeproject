@@ -30,11 +30,15 @@ parser.add_argument("--i", type=int, default=0, help="i")
 parser.add_argument("--j", type=int, default=0, help="j")
 
 
-args: Dict = parser.parse_args()
+args: Dict = parser.parse_args().__dict__
 
-wandb.init(project="simple", entity="machinelearningbrewery", config=args.__dict__)
+wandb.init(project="simple", entity="machinelearningbrewery", config=args)
 
-model = torch.nn.Parameter(torch.Tensor([args.i, args.j]), requires_grad=True)
+model = torch.nn.Parameter(
+    torch.Tensor([args.i, args.j], dtype=torch), requires_grad=True
+)
+
+model.train()
 
 loss = torch.sum(model - float(args.i))
 loss.backward()
@@ -42,4 +46,4 @@ loss.backward()
 wandb.log({"loss": loss})
 # log model gradients and parameters
 wandb.log({"gradients": wandb.Histogram(model.grad)})
-wandb.log({"parameters": wandb.Histogram(model.detach())})
+wandb.log({"parameters": wandb.Histogram(model)})

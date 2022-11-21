@@ -1,32 +1,26 @@
-FROM gcr.io/deeplearning-platform-release/pytorch-cpu.1-4:latest
+FROM gcr.io/deeplearning-platform-release/base-cpu
 
-SHELL ["/bin/bash", "-c"]
+RUN conda create -n main python=3.10 -y
 
-RUN apt-get update
+SHELL ["conda", "run", "-n", "main", "/bin/bash", "-c"]
+
+RUN apt update
+RUN apt install aptitude -y
+
 RUN conda init bash
-RUN conda create -n gate python=3.10 -y
-RUN echo "conda activate gate" >> ~/.bashrc
+RUN conda install -c conda-forge mamba -y
+RUN mamba install -c conda-forge wandb transformers -y
+RUN mamba install -c conda-forge google-cloud-storage -y
+RUN mamba install -c conda-forge google-api-python-client -y
+RUN mamba install -c conda-forge gh -y
+RUN mamba install -c conda-forge git -y
+RUN mamba install -c conda-forge git-lfs -y
 
-RUN git clone https://github.com/AntreasAntoniou/GATE.git
+RUN git lfs install
 
-SHELL ["conda", "run", "-n", "gate", "/bin/bash", "-c"]
+RUN echo "conda activate main" >> ~/.bashrc
+RUN echo 'eval "$(starship init bash)"' >> ~/.bashrc
 
-RUN cd GATE \
-    && conda install -c conda-forge mamba -y \
-    && mamba install pytorch torchvision torchaudio -c pytorch -c conda-forge \
-    && bash install_dependencies.sh
 
-RUN apt install fish -y \
-    && mamba install starship -y
+ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
 
-RUN apt install libgl1-mesa-glx -y
-RUN apt-get install 'ffmpeg'\
-    'libsm6'\
-    'libxext6'  -y \
-
-RUN cd GATE \
-    && git pull
-
-CWD /GATE
-
-CMD ["bin/bash"]

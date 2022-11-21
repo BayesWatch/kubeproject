@@ -36,10 +36,12 @@ wandb.init(project="simple", entity="machinelearningbrewery", config=args.__dict
 
 model = torch.nn.Parameter(torch.Tensor([args.i, args.j]), requires_grad=True)
 
+model.train()
+
 loss = torch.sum(model - float(args.i))
 loss.backward()
 
 wandb.log({"loss": loss})
 # log model gradients and parameters
 wandb.log({"gradients": wandb.Histogram(model.grad)})
-wandb.log({"parameters": wandb.Histogram(model.detach())})
+wandb.log({"parameters": wandb.Histogram(model)})

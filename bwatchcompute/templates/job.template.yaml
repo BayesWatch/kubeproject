@@ -7,8 +7,8 @@ spec:
     spec:
       containers:
         - name: train-container
-          imagePullPolicy: Always
           image: xaviervasques/kubernetes-models:latest
-          command: ["python3", "train.py", "rm", "./id_rsa"]
+          command: []
+          imagePullPolicy: Always
       restartPolicy: Never
   backoffLimit: 4

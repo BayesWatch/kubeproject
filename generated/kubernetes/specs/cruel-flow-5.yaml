@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: dummy-exp-blocky-halo-4
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      containers:
+      - command:
+        - echo
+        - Reason
+        - is,
+        - and
+        - ought
+        - only
+        - to
+        - be
+        - the
+        - slave
+        - of
+        - the
+        - passions.
+        image: ghcr.io/bayeswatch/compute-gpu:0.1.0
+        imagePullPolicy: Always
+        name: job-container
+      restartPolicy: Never

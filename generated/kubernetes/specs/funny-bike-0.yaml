@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: train-models-job
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      containers:
+      - command:
+        - echo
+        - Beauty
+        - is
+        - 'no'
+        - quality
+        - in
+        - things
+        - 'themselves:'
+        - It
+        - exists
+        - merely
+        - in
+        - the
+        - mind
+        - which
+        - contemplates
+        - them;
+        - and
+        - each
+        - mind
+        - perceives
+        - a
+        - different
+        - beauty.
+        image: ghcr.io/bayeswatch/compute-gpu:0.1.0
+        imagePullPolicy: Always
+        name: job-container
+      restartPolicy: Never

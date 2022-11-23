@@ -7,6 +7,7 @@ from typing import List, Union
 import yaml
 import randomname
 import subprocess
+import tqdm
 
 
 class Job(object):
@@ -44,10 +45,11 @@ class Job(object):
         spec_dict["spec"]["backoffLimit"] = self.num_repeat_experiment
 
         spec_dict_list = []
-
         for idx, script_entry in enumerate(self.script_list):
             current_dict = copy.deepcopy(spec_dict)
-            spec_dict["metadata"]["name"] = f"{self.name}-{randomname.get_name()}-{idx}"
+            current_dict["metadata"][
+                "name"
+            ] = f"{self.name}-{randomname.get_name()}-{idx}"
             current_dict["spec"]["template"]["spec"]["containers"][0]["command"] = list(
                 script_entry.split(" ")
             )
@@ -56,10 +58,13 @@ class Job(object):
 
         spec_file_list = []
         for idx, spec_dict in enumerate(spec_dict_list):
-
-            spec_file = self.kubernetes_spec_dir / f"{randomname.get_name()}-{idx}.yaml"
+            spec_file = (
+                self.kubernetes_spec_dir
+                / f"{self.name}-{randomname.get_name()}-{idx}.yaml"
+            )
             with open(spec_file, "w+") as spec_fp:
                 yaml.safe_dump(spec_dict, spec_fp)
+
             spec_file_list.append(spec_file)
 
         self.spec_file_list = spec_file_list
@@ -68,17 +73,20 @@ class Job(object):
 
     def run_jobs(self):
         output_dict = {}
-        for script_file in self.spec_file_list:
-            result = subprocess.run(
-                f"kubectl create -f {script_file.as_posix()}",
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-            output_dict[script_file] = {
-                "stdout": result.stdout,
-                "stderr": result.stderr,
-            }
+        with tqdm.tqdm(total=len(self.spec_file_list)) as pbar:
+            for script_file in self.spec_file_list:
+                result = subprocess.run(
+                    f"kubectl create -f {script_file.as_posix()}",
+                    shell=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                )
+                output_dict[script_file] = {
+                    "stdout": result.stdout,
+                    "stderr": result.stderr,
+                }
+                pbar.update(1)
+                pbar.set_description(f"Running {script_file.name}")
         return output_dict
 
 

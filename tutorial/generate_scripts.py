@@ -9,7 +9,7 @@ def get_scripts():
     template_script_text = template_script_path.read_text()
 
     script_list = []
-    for i, j in itertools.product(range(10), range(10)):
+    for i, j in itertools.product(range(1), range(1)):
         current_script_text = copy.deepcopy(template_script_text)
         current_script_text = current_script_text.replace("$args$", f"--i {i} --j {j}")
         script_list.append(current_script_text)

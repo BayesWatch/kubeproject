@@ -7,6 +7,10 @@ from rich import print
 def get_scripts():
     template_script_path = Path("tutorial/simple.sh")
     template_script_text = template_script_path.read_text()
+    script_storage_path = template_script_path.parent / "scripts"
+
+    if not script_storage_path.exists():
+        script_storage_path.mkdir(parents=True)
 
     script_list = []
     for i, j in itertools.product(range(1), range(1)):

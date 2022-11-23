@@ -11,4 +11,4 @@ export MODEL_DIR=/data/models
 
 git clone https://github.com/BayesWatch/bwatchcompute.git
 cd bwatchcompute
-python tutorial/simple.py $args$
+python tutorial/simple.py --i 0 --j 0

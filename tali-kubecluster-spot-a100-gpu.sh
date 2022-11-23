@@ -6,7 +6,7 @@ gcloud beta container --project "tali-multi-modal" clusters create "spot-gpu-clu
 --network "projects/tali-multi-modal/global/networks/default" \
 --subnetwork "projects/tali-multi-modal/regions/us-central1/subnetworks/default" --no-enable-intra-node-visibility \
 --default-max-pods-per-node "110" --enable-autoscaling --min-nodes "0" --max-nodes "16" --no-enable-master-authorized-networks \
---addons HorizontalPodAutoscaling,HttpLoadBalancing,GcePersistentDiskCsiDriver,GceFilestoreCsiDriver --enable-autoupgrade \
+--addons HorizontalPodAutoscaling,HttpLoadBalancing,GcePersistentDiskCsiDriver,GcpFilestoreCsiDriver --enable-autoupgrade \
 --enable-autorepair --max-surge-upgrade 10 --max-unavailable-upgrade 0 --autoscaling-profile optimize-utilization \
 --resource-usage-bigquery-dataset "tali_billing_us" --enable-network-egress-metering --enable-resource-consumption-metering \
 --workload-pool "tali-multi-modal.svc.id.goog" --enable-shielded-nodes --node-locations "us-central1-f"

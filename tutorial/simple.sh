@@ -1,3 +1,4 @@
+#!/bin/bash
 export WANDB_API_KEY=9a295b91cf65c412f681e492d6b92fe4be4b000b
 export WANDB_ENTITY=machinelearningbrewery
 export WANDB_PROJECT=simple-kubernetes
@@ -11,4 +12,3 @@ export MODEL_DIR=/data/models
 git clone https://github.com/BayesWatch/bwatchcompute.git
 cd bwatchcompute
 python tutorial/simple.py $args$
-

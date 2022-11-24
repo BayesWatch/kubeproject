@@ -29,7 +29,7 @@ if __name__ == "__main__":
     exp = Job(
         name="pytorch-simple-exp",
         script_list=script_list,
-        container_path="ghcr.io/bayeswatch/compute-gpu:0.1.0",
+        container_path="ghcr.io/bayeswatch/bwatch-tutorial:latest",
         num_repeat_experiment=3,
     )
 

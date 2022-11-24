@@ -7,8 +7,9 @@ from rich import print
 def get_scripts():
 
     script_list = []
-    for i, j in itertools.product(range(5), range(5)):
-        current_script_text = f"/opt/conda/envs/main/bin/python /workspace/bwatchcompute/tutorial/simple.py --i {i} --j {j}"
+    for i, j in itertools.product(range(1), range(1)):
+        # current_script_text = f"/opt/conda/envs/main/bin/python /workspace/bwatchcompute/tutorial/simple.py --i {i} --j {j}"
+        current_script_text = "nvidia-smi"
         script_list.append(current_script_text)
 
     return script_list

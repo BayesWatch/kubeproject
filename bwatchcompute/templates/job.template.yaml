@@ -16,5 +16,8 @@ spec:
                   name: wandb-vars
                   key: WANDB_API_KEY
           imagePullPolicy: Always
+          resources:
+            limits:
+              nvidia.com/gpu: 1
       restartPolicy: Never
   backoffLimit: 4

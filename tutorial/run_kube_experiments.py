@@ -24,7 +24,7 @@ if __name__ == "__main__":
     exp = Job(
         name="pytorch-simple-exp",
         script_list=script_list,
-        container_path="ghcr.io/bayeswatch/bwatch-tutorial:latest",
+        container_path="ghcr.io/bayeswatch/bwatch-tutorial:0.2.0",
         num_repeat_experiment=3,
     )
 

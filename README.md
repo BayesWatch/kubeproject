@@ -139,3 +139,50 @@ kubectl -n <namespace-name> get secret <folder-for-secrets-name> -o jsonpath='{.
 kubectl -n <namespace-name> describe secrets/<folder-for-secrets-name>
 kubectl -n <namespace-name> get secrets
 ```
+
+### Managing external GCP persistent disks with Kubernetes
+
+See the documentation at https://cloud.google.com/kubernetes-engine/docs/concepts/persistent-volumes
+
+the TLDR is, use the below as a guiding manifest for your disk claims and consumptions
+
+```yaml
+# pvc-pod-demo.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-demo
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi
+  storageClassName: standard-rwo
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: pod-demo
+spec:
+  volumes:
+    - name: pvc-demo-vol
+      persistentVolumeClaim:
+       claimName: pvc-demo
+  containers:
+    - name: pod-demo
+      image: nginx
+      resources:
+        limits:
+          cpu: 10m
+          memory: 80Mi
+        requests:
+          cpu: 10m
+          memory: 80Mi
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: pvc-demo-vol
+```

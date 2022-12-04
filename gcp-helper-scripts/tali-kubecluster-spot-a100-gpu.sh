@@ -1,6 +1,6 @@
 gcloud beta container --project "tali-multi-modal" clusters create "spot-gpu-cluster-1" --zone "us-central1-a" \
     --no-enable-basic-auth --cluster-version "1.23.12-gke.100" --release-channel "regular" --machine-type "a2-highgpu-1g" \
-    --accelerator "type=nvidia-tesla-a100,count=1" --image-type "UBUNTU_CONTAINERD" --disk-type "pd-standard" --disk-size "100" \
+    --accelerator "type=nvidia-tesla-a100,count=1" --image-type "UBUNTU_CONTAINERD" --disk-type "pd-standard" --disk-size "300" \
     --metadata disable-legacy-endpoints=true --scopes "https://www.googleapis.com/auth/cloud-platform" --max-pods-per-node "110" \
     --spot --num-nodes "1" --logging=SYSTEM,WORKLOAD --monitoring=SYSTEM --enable-ip-alias \
     --network "projects/tali-multi-modal/global/networks/default" \

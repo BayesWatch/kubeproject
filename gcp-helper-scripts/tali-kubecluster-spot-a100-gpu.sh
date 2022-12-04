@@ -1,4 +1,4 @@
-gcloud beta container --project "tali-multi-modal" clusters create "spot-gpu-cluster-1" --zone "us-central1-f" \
+gcloud beta container --project "tali-multi-modal" clusters create "spot-gpu-cluster-1" --zone "us-central1-a" \
 --no-enable-basic-auth --cluster-version "1.23.12-gke.100" --release-channel "regular" --machine-type "a2-highgpu-1g" \
 --accelerator "type=nvidia-tesla-a100,count=1" --image-type "UBUNTU_CONTAINERD" --disk-type "pd-standard" --disk-size "100" \
 --metadata disable-legacy-endpoints=true --scopes "https://www.googleapis.com/auth/cloud-platform" --max-pods-per-node "110" \
@@ -9,4 +9,4 @@ gcloud beta container --project "tali-multi-modal" clusters create "spot-gpu-clu
 --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcePersistentDiskCsiDriver,GcpFilestoreCsiDriver --enable-autoupgrade \
 --enable-autorepair --max-surge-upgrade 10 --max-unavailable-upgrade 0 --autoscaling-profile optimize-utilization \
 --resource-usage-bigquery-dataset "tali_billing_us" --enable-network-egress-metering --enable-resource-consumption-metering \
---workload-pool "tali-multi-modal.svc.id.goog" --enable-shielded-nodes --node-locations "us-central1-f"
+--workload-pool "tali-multi-modal.svc.id.goog" --enable-shielded-nodes --node-locations "us-central1-a"

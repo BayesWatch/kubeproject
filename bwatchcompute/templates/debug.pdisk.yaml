@@ -1,0 +1,19 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: pod-pdisk-ls
+spec:
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+       claimName: pvc-instafluencer-data
+  containers:
+    - name: debug
+      image: nginx
+      command: ["ls", "/usr/share/nginx/html"]
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: data

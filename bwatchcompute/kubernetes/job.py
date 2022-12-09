@@ -15,8 +15,6 @@ class Job(object):
         self,
         name: str,
         script_list: List[str],
-        environment_variables: dict,
-        secret_variables: dict,
         container_path: str,
         num_repeat_experiment: int = 5,
         kubernetes_spec_dir: Union[str, Path] = Path("generated/kubernetes/specs"),
@@ -26,8 +24,8 @@ class Job(object):
         # https://kubernetes.io/docs/concepts/workloads/controllers/job/
         self.name = name
         self.script_list = script_list
-        self.environment_variables = environment_variables
-        self.secret_variables = secret_variables
+        # self.environment_variables = environment_variables
+        # self.secret_variables = secret_variables
         self.container_path = container_path
         self.num_repeat_experiment = num_repeat_experiment
         self.kubernetes_spec_dir = Path(kubernetes_spec_dir)
@@ -58,26 +56,26 @@ class Job(object):
                 script_entry.split(" ")
             )
 
-            env_variables_list = []
+            # env_variables_list = []
 
-            for key, value in self.secret_variables.items():
-                current_dict = {
-                    "name": key,
-                    "valueFrom": {
-                        "secretKeyRef": {
-                            "name": key,
-                            "key": value,
-                        }
-                    },
-                }
-                env_variables_list.append(current_dict)
+            # for key, value in self.secret_variables.items():
+            #     env_variables_list.append({
+            #         "name": key,
+            #         "valueFrom": {
+            #             "secretKeyRef": {
+            #                 "name": key,
+            #                 "key": value,
+            #             }
+            #         },
+            #     })
+            #     env_variables_list.append(current_dict)
             
-            for key, value in self.environment_variables.items():
-                current_dict = {"name": key, "value": value}
-                env_variables_list.append(current_dict)
+            # for key, value in self.environment_variables.items():
+            #     env_variables_list.append({"name": key, "value": value})
+            #     env_variables_list.append(current_dict)
             
-            current_dict["spec"]["template"]["spec"]["containers"][0]["env"] = env_variables_list
-            
+            # current_dict["spec"]["template"]["spec"]["containers"][0]["env"] = env_variables_list
+            spec_dict_list.append(current_dict)
 
         spec_file_list = []
         for idx, spec_dict in enumerate(spec_dict_list):
@@ -89,7 +87,7 @@ class Job(object):
                 yaml.safe_dump(spec_dict, spec_fp)
 
             spec_file_list.append(spec_file)
-
+        
         self.spec_file_list = spec_file_list
         self.spec_dict_list = spec_dict_list
         self.gen_idx += 1

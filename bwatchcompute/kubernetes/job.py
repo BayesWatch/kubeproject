@@ -65,8 +65,8 @@ class Job(object):
                     "name": key,
                     "valueFrom": {
                         "secretKeyRef": {
-                            "name": value["namespace"],
-                            "key": value["secret_name"],
+                            "name": key,
+                            "key": value,
                         }
                     },
                 }

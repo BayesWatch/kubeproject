@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: train-models-job
+spec:
+  template:
+    spec:
+      volumes:
+      - name: pvc-instagram-vol
+        persistentVolumeClaim:
+          claimName: pvc-instagram-disk
+      containers:
+        - name: train-container
+          image: xaviervasques/kubernetes-models:latest
+          command: []
+          env:
+            - name: WANDB_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: wandb-vars
+                  key: WANDB_API_KEY
+          imagePullPolicy: Always
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+      restartPolicy: Never
+  backoffLimit: 4

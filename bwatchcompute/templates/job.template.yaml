@@ -5,10 +5,6 @@ metadata:
 spec:
   template:
     spec:
-      volumes:
-      - name: pvc-instagram-vol
-        persistentVolumeClaim:
-          claimName: pvc-instagram-disk
       containers:
         - name: train-container
           image: xaviervasques/kubernetes-models:latest

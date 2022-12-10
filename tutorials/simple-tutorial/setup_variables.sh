@@ -10,7 +10,7 @@ export DATASET_DIR=/volume/datasets
 export MODEL_DIR=/volume/models
 
 export CLUSTER_NAME=spot-gpu-cluster-1
-export CLUSTER_ZONE=us-central1-f
+export CLUSTER_ZONE=us-central1-a
 export CLUSTER_PROJECT=tali-multi-modal
 
 export USER_EMAIL="iam@antreas.io"

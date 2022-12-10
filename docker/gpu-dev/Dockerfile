@@ -28,7 +28,6 @@ RUN echo yes | pip install loguru
 RUN echo yes | pip install nvitop
 RUN git lfs install
 
-
 RUN mkdir -p /root/.config/fish/
 RUN touch /root/.config/fish/config.fish
 RUN echo "conda activate main" >> ~/.bashrc

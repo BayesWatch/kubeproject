@@ -21,7 +21,7 @@ os.environ[
 ] = "DETAIL"  # extremely useful when debugging DDP setups
 
 install()  # beautiful and clean tracebacks for debugging
-dotenv.load_dotenv(override=True, verbose=True)
+
 # Create a parser to parse the arguments
 
 if __name__ == "__main__":
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     parser.add_argument("--i", type=int, default=0, help="i")
     parser.add_argument("--j", type=int, default=0, help="j")
 
-    args: Dict = parser.parse_args()
+    args = parser.parse_args()
 
     wandb.init(project="simple", entity="machinelearningbrewery", config=args.__dict__)
 

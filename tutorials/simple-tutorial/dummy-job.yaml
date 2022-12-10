@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: helloworld-dummy
+spec:
+  template:
+    spec:
+      containers:
+        - name: helloworld-wandb-export
+          image: nginx
+          command: ["echo", "$WANDB_API_KEY"]
+          env:
+            - name: WANDB_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: wandb-vars
+                  key: WANDB_API_KEY
+          imagePullPolicy: Always
+      restartPolicy: Never
+  backoffLimit: 4

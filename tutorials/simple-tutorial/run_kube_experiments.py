@@ -23,7 +23,7 @@ if __name__ == "__main__":
     exp = Job(
         name="pytorch-simple-exp",
         script_list=script_list,
-        container_path="ghcr.io/bayeswatch/bwatch-tutorial:0.2.0",
+        docker_image_path="ghcr.io/bayeswatch/bwatch-tutorial:0.2.0",
         secret_variables={"antreas-vars": "WANDB_API_KEY"},
         environment_variables={"USER_NAME": os.getenv("USER_NAME")},
         num_repeat_experiment=3,

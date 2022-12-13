@@ -3,12 +3,13 @@
 
 import copy
 from pathlib import Path
-from pprint import pformat
+import pkg_resources as pkg
 from typing import Dict, List, Union
 import yaml
 import randomname
 import subprocess
 import tqdm
+from rich import print
 
 
 class Job(object):
@@ -16,7 +17,7 @@ class Job(object):
         self,
         name: str,
         script_list: List[str],
-        container_path: str,
+        docker_image_path: str,
         secret_variables: Dict[str, str] = None,
         environment_variables: Dict[str, str] = None,
         num_repeat_experiment: int = 5,
@@ -29,7 +30,7 @@ class Job(object):
         self.script_list = script_list
         self.environment_variables = environment_variables
         self.secret_variables = secret_variables
-        self.container_path = container_path
+        self.container_path = docker_image_path
         self.num_repeat_experiment = num_repeat_experiment
         self.kubernetes_spec_dir = Path(kubernetes_spec_dir)
         self.spec_file_list = None
@@ -40,7 +41,10 @@ class Job(object):
             self.kubernetes_spec_dir.mkdir(parents=True)
 
     def generate_spec_files(self):
-        spec_template = Path("bwatchcompute/templates/job.template.yaml")
+        spec_template = Path(
+            pkg.resource_filename(__name__, "../templates/job.template.yaml")
+        )
+        print(f"Using spec template: {spec_template}")
         spec_dict = yaml.safe_load(spec_template.read_text())
         spec_dict["spec"]["template"]["spec"]["containers"][0]["name"] = "job-container"
         spec_dict["spec"]["template"]["spec"]["containers"][0][
@@ -125,7 +129,6 @@ class Job(object):
 
 
 if __name__ == "__main__":
-    from rich import print
     from quote import quote
 
     quotes = quote("hume", limit=10)
@@ -135,7 +138,7 @@ if __name__ == "__main__":
     exp = Job(
         name="dummy-exp",
         script_list=script_list,
-        container_path="ghcr.io/bayeswatch/compute-gpu:0.1.0",
+        docker_image_path="ghcr.io/bayeswatch/compute-gpu:0.1.0",
         num_repeat_experiment=3,
     )
 

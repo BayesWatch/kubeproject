@@ -6,22 +6,25 @@ spec:
   template:
     spec:
       volumes:
-      - name: pvc-instagram-vol
-        persistentVolumeClaim:
-          claimName: pvc-instagram-disk
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 80Gi
+        - name: pvc-instagram-vol
+          persistentVolumeClaim:
+            claimName: pvc-instagram-disk
       containers:
         - name: train-container
           image: xaviervasques/kubernetes-models:latest
           command: []
-          env:
-            - name: WANDB_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: wandb-vars
-                  key: WANDB_API_KEY
           imagePullPolicy: Always
           resources:
             limits:
               nvidia.com/gpu: 1
+          volumeMounts:
+            - mountPath: /dev/shm
+              name: dshm
+            - mountPath: /volume/dataset
+              name: pvc-instagram-vol
       restartPolicy: Never
   backoffLimit: 4

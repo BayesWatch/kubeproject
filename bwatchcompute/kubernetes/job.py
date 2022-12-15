@@ -11,6 +11,10 @@ import subprocess
 import tqdm
 from rich import print
 
+@dataclass
+class ExperimentTemplate:
+    standard: str = "job.template.yaml"
+    standard_pd: str = "job-with-pdisk.template.yaml"
 
 class Job(object):
     def __init__(
@@ -21,6 +25,8 @@ class Job(object):
         secret_variables: Dict[str, str] = None,
         environment_variables: Dict[str, str] = None,
         num_repeat_experiment: int = 5,
+        experiment_template: str = ExperimentTemplate.standard,
+        shm_size: str = "80Gi",
         kubernetes_spec_dir: Union[str, Path] = Path("generated/kubernetes/specs"),
     ):
         # to add additional features you might find these pages useful
@@ -32,6 +38,8 @@ class Job(object):
         self.secret_variables = secret_variables
         self.container_path = docker_image_path
         self.num_repeat_experiment = num_repeat_experiment
+        self.experiment_template = experiment_template
+        self.shm_size = shm_size
         self.kubernetes_spec_dir = Path(kubernetes_spec_dir)
         self.spec_file_list = None
         self.spec_dict_list = None
@@ -42,7 +50,7 @@ class Job(object):
 
     def generate_spec_files(self):
         spec_template = Path(
-            pkg.resource_filename(__name__, "../templates/job.template.yaml")
+            pkg.resource_filename(__name__, f"../templates/{self.experiment_template}")
         )
         print(f"Using spec template: {spec_template}")
         spec_dict = yaml.safe_load(spec_template.read_text())
@@ -52,6 +60,7 @@ class Job(object):
         ] = self.container_path
 
         spec_dict["spec"]["backoffLimit"] = self.num_repeat_experiment
+        spec_dict["spec"]["template"]["spec"]["volumes"][0]["emptyDir"]["sizeLimit"] = self.shm_size
 
         spec_dict_list = []
         for idx, script_entry in enumerate(self.script_list):

@@ -18,8 +18,8 @@ spec:
           resources:
             limits:
               nvidia.com/gpu: 1
-            volumeMounts:
-              - mountPath: /dev/shm
-                name: dshm
+          volumeMounts:
+            - mountPath: /dev/shm
+              name: dshm
       restartPolicy: Never
   backoffLimit: 4

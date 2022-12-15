@@ -5,6 +5,10 @@ metadata:
 spec:
   template:
     spec:
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
       containers:
         - name: train-container
           image: xaviervasques/kubernetes-models:latest

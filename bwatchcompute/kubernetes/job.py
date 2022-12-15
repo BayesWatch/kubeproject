@@ -3,6 +3,7 @@
 
 import copy
 from pathlib import Path
+from dataclasses import MISSING, dataclass, field
 import pkg_resources as pkg
 from typing import Dict, List, Union
 import yaml
@@ -11,10 +12,12 @@ import subprocess
 import tqdm
 from rich import print
 
+
 @dataclass
 class ExperimentTemplate:
     standard: str = "job.template.yaml"
     standard_pd: str = "job-with-pdisk.template.yaml"
+
 
 class Job(object):
     def __init__(
@@ -60,7 +63,9 @@ class Job(object):
         ] = self.container_path
 
         spec_dict["spec"]["backoffLimit"] = self.num_repeat_experiment
-        spec_dict["spec"]["template"]["spec"]["volumes"][0]["emptyDir"]["sizeLimit"] = self.shm_size
+        spec_dict["spec"]["template"]["spec"]["volumes"][0]["emptyDir"][
+            "sizeLimit"
+        ] = self.shm_size
 
         spec_dict_list = []
         for idx, script_entry in enumerate(self.script_list):

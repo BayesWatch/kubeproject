@@ -9,6 +9,7 @@ spec:
         - name: dshm
           emptyDir:
             medium: Memory
+            sizeLimit: 80Gi
       containers:
         - name: train-container
           image: xaviervasques/kubernetes-models:latest
@@ -17,5 +18,8 @@ spec:
           resources:
             limits:
               nvidia.com/gpu: 1
+            volumeMounts:
+              - mountPath: /dev/shm
+                name: dshm
       restartPolicy: Never
   backoffLimit: 4

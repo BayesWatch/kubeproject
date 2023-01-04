@@ -31,6 +31,7 @@ class Job(object):
         experiment_template: str = ExperimentTemplate.standard,
         shm_size: str = "80Gi",
         kubernetes_spec_dir: Union[str, Path] = Path("generated/kubernetes/specs"),
+        persistent_disk_claim_names_to_mount_dict: Dict[str, str] = None
     ):
         # to add additional features you might find these pages useful
         # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/job-v1/#JobSpec
@@ -47,6 +48,16 @@ class Job(object):
         self.spec_file_list = None
         self.spec_dict_list = None
         self.gen_idx = 0
+        self.persistent_disk_claim_names_to_mount_dict = persistent_disk_claim_names_to_mount_dict
+
+        if kubernetes_spec_dir == ExperimentTemplate.standard_pd:
+            self.use_persistent_disks = True
+            if persistent_disk_claim_names_to_mount_dict == None:
+                raise ValueError("For persistent disk experiment templates you must \
+                define a persistent_disk_claim_names_to_mount_dict variable consisting \
+                of persistent_disk_claims to mounting directories for an instance")
+        else:
+            self.use_persistent_disks = False
 
         if not self.kubernetes_spec_dir.exists():
             self.kubernetes_spec_dir.mkdir(parents=True)
@@ -66,6 +77,16 @@ class Job(object):
         spec_dict["spec"]["template"]["spec"]["volumes"][0]["emptyDir"][
             "sizeLimit"
         ] = self.shm_size
+
+        volume_claims = []
+        volume_mounts = []
+
+        for pvc_name, job_mount_dir in self.persistent_disk_claim_names_to_mount_dict.items():
+            volume_claims.append(dict(name=f"{pvc_name}-vol", persistentVolumeClaim=dict(claimName=pvc_name)))
+            volume_mounts.append(dict(mountPath=job_mount_dir, name=f"{pvc_name}-vol"))
+        
+        spec_dict["spec"]["template"]["spec"]["volumes"].extend(volume_claims)
+        spec_dict["spec"]["template"]["spec"]["containers"]["volumeMounts"].extend(volume_mounts)
 
         spec_dict_list = []
         for idx, script_entry in enumerate(self.script_list):

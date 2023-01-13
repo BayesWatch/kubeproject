@@ -95,7 +95,9 @@ class Job(object):
                     persistentVolumeClaim=dict(claimName=pvc_name, readOnly=True),
                 )
             )
-            volume_mounts.append(dict(mountPath=job_mount_dir, name=f"{pvc_name}-vol", readOnly=True))
+            volume_mounts.append(
+                dict(mountPath=job_mount_dir, name=f"{pvc_name}-vol", readOnly=True)
+            )
 
         spec_dict["spec"]["template"]["spec"]["volumes"].extend(volume_claims)
         print(volume_mounts)

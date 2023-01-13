@@ -9,7 +9,7 @@ setup(
     author="Antreas Antoniou",
     author_email="iam@antreas.io",
     packages=["bwatchcompute", "bwatchcompute.kubernetes", "bwatchcompute.templates"],
-    package_data={'bwatchcompute': ['templates/*.yaml']},
+    package_data={"bwatchcompute": ["templates/*.yaml"]},
     include_package_data=True,
     install_requires=["quote", "rich", "randomname", "pyyaml", "tqdm"],
 )

@@ -30,8 +30,11 @@ class Job(object):
         num_repeat_experiment: int = 5,
         experiment_template: str = ExperimentTemplate.standard,
         shm_size: str = "80Gi",
-        kubernetes_spec_dir: Union[str, Path] = Path("generated/kubernetes/specs"),
+        kubernetes_spec_dir: Union[str, Path] = Path(
+            "generated/kubernetes/specs"
+        ),
         persistent_disk_claim_names_to_mount_dict: Dict[str, str] = None,
+        num_gpus: int = 1,
     ):
         # to add additional features you might find these pages useful
         # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/job-v1/#JobSpec
@@ -51,6 +54,7 @@ class Job(object):
         self.persistent_disk_claim_names_to_mount_dict = (
             persistent_disk_claim_names_to_mount_dict
         )
+        self.num_gpus = num_gpus
 
         if kubernetes_spec_dir == ExperimentTemplate.standard_pd:
             self.use_persistent_disks = True
@@ -68,11 +72,15 @@ class Job(object):
 
     def generate_spec_files(self):
         spec_template = Path(
-            pkg.resource_filename(__name__, f"../templates/{self.experiment_template}")
+            pkg.resource_filename(
+                __name__, f"../templates/{self.experiment_template}"
+            )
         )
         print(f"Using spec template: {spec_template}")
         spec_dict = yaml.safe_load(spec_template.read_text())
-        spec_dict["spec"]["template"]["spec"]["containers"][0]["name"] = "job-container"
+        spec_dict["spec"]["template"]["spec"]["containers"][0][
+            "name"
+        ] = "job-container"
         spec_dict["spec"]["template"]["spec"]["containers"][0][
             "image"
         ] = self.container_path
@@ -81,6 +89,9 @@ class Job(object):
         spec_dict["spec"]["template"]["spec"]["volumes"][0]["emptyDir"][
             "sizeLimit"
         ] = self.shm_size
+        spec_dict["spec"]["template"]["spec"]["containers"][0]["resources"][
+            "limits"
+        ]["nvidia.com/gpu"] = self.num_gpus
 
         volume_claims = []
         volume_mounts = []
@@ -92,18 +103,24 @@ class Job(object):
             volume_claims.append(
                 dict(
                     name=f"{pvc_name}-vol",
-                    persistentVolumeClaim=dict(claimName=pvc_name, readOnly=True),
+                    persistentVolumeClaim=dict(
+                        claimName=pvc_name, readOnly=True
+                    ),
                 )
             )
             volume_mounts.append(
-                dict(mountPath=job_mount_dir, name=f"{pvc_name}-vol", readOnly=True)
+                dict(
+                    mountPath=job_mount_dir,
+                    name=f"{pvc_name}-vol",
+                    readOnly=True,
+                )
             )
 
         spec_dict["spec"]["template"]["spec"]["volumes"].extend(volume_claims)
         print(volume_mounts)
-        spec_dict["spec"]["template"]["spec"]["containers"][0]["volumeMounts"].extend(
-            volume_mounts
-        )
+        spec_dict["spec"]["template"]["spec"]["containers"][0][
+            "volumeMounts"
+        ].extend(volume_mounts)
 
         spec_dict_list = []
         for idx, script_entry in enumerate(self.script_list):
@@ -111,9 +128,9 @@ class Job(object):
             current_dict["metadata"][
                 "name"
             ] = f"{self.name}-{randomname.get_name()}-{idx}"
-            current_dict["spec"]["template"]["spec"]["containers"][0]["command"] = list(
-                script_entry.split(" ")
-            )
+            current_dict["spec"]["template"]["spec"]["containers"][0][
+                "command"
+            ] = list(script_entry.split(" "))
 
             env_variables_list = []
 
@@ -185,7 +202,9 @@ if __name__ == "__main__":
 
     quotes = quote("hume", limit=10)
 
-    script_list = [f"echo {quote_instance['quote']}" for quote_instance in quotes]
+    script_list = [
+        f"echo {quote_instance['quote']}" for quote_instance in quotes
+    ]
 
     exp = Job(
         name="dummy-exp",

@@ -33,9 +33,13 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    wandb.init(project="simple", entity="machinelearningbrewery", config=args.__dict__)
+    wandb.init(
+        project="simple", entity="machinelearningbrewery", config=args.__dict__
+    )
 
-    model = torch.nn.Parameter(torch.Tensor([args.i, args.j]), requires_grad=True)
+    model = torch.nn.Parameter(
+        torch.Tensor([args.i, args.j]), requires_grad=True
+    )
 
     loss = torch.sum(model - float(args.i))
     loss.backward()
